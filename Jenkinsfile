@@ -1,40 +1,11 @@
-// Declarative //
 pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage ('Print') {
             steps {
-                echo 'Building..'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
+                echo "Hello Devops Engineers"
             }
         }
     }
 }
-// Script //
-node {
-    stage('Build') {
-        echo 'Building....'
-    }
-    stage('Test') {
-        echo 'Building....'
-    }
-    stage('Deploy') {
-        echo 'Deploying....'
-    }
-}
-// Script //
-node {
-    checkout scm 
-    /* .. snip .. */
-}
-// Declarative not yet implemented //
