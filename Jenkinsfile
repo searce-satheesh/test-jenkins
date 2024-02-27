@@ -1,11 +1,33 @@
 pipeline {
     agent any
-
+    
     stages {
-        stage ('Print') {
+        stage('Build') {
             steps {
-                echo "Hello Devops Engineers"
+                echo 'Building...'
+                // Add your build steps here
             }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                // Add your test steps here
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                // Add your deployment steps here
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
