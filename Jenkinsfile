@@ -6,7 +6,6 @@ pipeline {
         IMAGE_NAME = 'my-app'
         IMAGE_TAG = 'latest'
         SERVICE_ACCOUNT_KEY = credentials('c3dc6ea6-e9b2-4abd-8d7f-b82a69eb42a5')
-    }
     stages {
         stage("Checkout code") {
             steps {
@@ -17,8 +16,8 @@ pipeline {
             steps {
                 script {
                     // Build Docker image
-                    docker.build("${PROJECT_ID}.pkg.dev/${REPOSITORY_NAME}/${IMAGE_NAME}:${IMAGE_TAG}")
-                    
+                    def dockerImage = docker.build("${PROJECT_ID}.gcr.io/${REPOSITORY_NAME}/${IMAGE_NAME}:${IMAGE_TAG}", "-f Dockerfile .")
+
                     // Authenticate with Google Cloud using service account key
                     withCredentials([file(credentialsId: SERVICE_ACCOUNT_KEY, variable: 'SERVICE_ACCOUNT_KEY_FILE')]) {
                         sh """
@@ -26,22 +25,19 @@ pipeline {
                             gcloud auth configure-docker "${PROJECT_ID}.gcr.io"
                         """
                     }
-                    
+
                     // Push Docker image to Artifact Registry
-                    sh "docker push ${PROJECT_ID}.gcr.io/${REPOSITORY_NAME}/${IMAGE_NAME}:${IMAGE_TAG}"
+                    dockerImage.push()
                 }
             }
         }
         // stage('Deploy to GKE') {
         //     steps {
         //         script {
-        //             // Apply deployment to GKE
-        //             sh "kubectl apply -f deployment.yaml"
+        //             // Deploy to GKE using kubectl
+        //             sh "kubectl apply -f deployment.yaml --cluster=${CLUSTER_NAME} --location=${LOCATION}"
         //         }
         //     }
         // }
     }
 }
-
-
-
