@@ -7,11 +7,11 @@ pipeline {
         IMAGE_TAG = 'latest'
         SERVICE_ACCOUNT_KEY = credentials('c3dc6ea6-e9b2-4abd-8d7f-b82a69eb42a5')
     stages {
-        stage("Checkout code") {
-            steps {
-                checkout scm
-            }
-        }
+        // stage("Checkout code") {
+        //     steps {
+        //         checkout scm
+        //     }
+        // }
         stage("Build and Push image to Artifact Registry") {
             steps {
                 script {
