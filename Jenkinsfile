@@ -2,9 +2,10 @@ pipeline {
     agent any
     environment {
         PROJECT_ID = 'project-satheesh'
-        CLUSTER_NAME = 'jenkins-pipeline'
-        LOCATION = 'us-central1'
-        CREDENTIALS_ID = 'cicd'
+        REPOSITORY_NAME = 'test-artifact-build'
+        IMAGE_NAME = 'my-app'
+        IMAGE_TAG = 'latest'
+        SERVICE_ACCOUNT_KEY = credentials('c3dc6ea6-e9b2-4abd-8d7f-b82a69eb42a5')
     }
     stages {
         stage("Checkout code") {
@@ -12,28 +13,35 @@ pipeline {
                 checkout scm
             }
         }
-        stage("Build image") {
+        stage("Build and Push image to Artifact Registry") {
             steps {
                 script {
-                    myapp = docker.build("satiz008/myweb:${env.BUILD_ID}")
-                }
-            }
-        }
-        stage("Push image") {
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-                            myapp.push("latest")
-                            myapp.push("${env.BUILD_ID}")
+                    // Build Docker image
+                    docker.build("${PROJECT_ID}.pkg.dev/${REPOSITORY_NAME}/${IMAGE_NAME}:${IMAGE_TAG}")
+                    
+                    // Authenticate with Google Cloud using service account key
+                    withCredentials([file(credentialsId: SERVICE_ACCOUNT_KEY, variable: 'SERVICE_ACCOUNT_KEY_FILE')]) {
+                        sh """
+                            gcloud auth activate-service-account --key-file="$SERVICE_ACCOUNT_KEY_FILE"
+                            gcloud auth configure-docker "${PROJECT_ID}.gcr.io"
+                        """
                     }
+                    
+                    // Push Docker image to Artifact Registry
+                    sh "docker push ${PROJECT_ID}.gcr.io/${REPOSITORY_NAME}/${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
-        }        
-        stage('Deploy to GKE') {
-            steps{
-                sh "sed -i 's/hello:latest/hello:${env.BUILD_ID}/g' deployment.yaml"
-                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-            }
         }
-    }    
+        // stage('Deploy to GKE') {
+        //     steps {
+        //         script {
+        //             // Apply deployment to GKE
+        //             sh "kubectl apply -f deployment.yaml"
+        //         }
+        //     }
+        // }
+    }
 }
+
+
+

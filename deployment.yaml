@@ -1,43 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello
-  labels:
-    app: hello
+  name: my-app
 spec:
-  strategy:
-    type: Recreate
+  replicas: 3
   selector:
     matchLabels:
-      app: hello
-
+      app: my-app
   template:
     metadata:
       labels:
-        app: hello
-        tier: hello
+        app: my-app
     spec:
       containers:
-      - name: hello
-        image: satiz008/myweb:latest
-        imagePullPolicy: Always
+      - name: my-app
+        image: us-central1-docker.pkg.dev/project-satheesh/test-artifact-build
         ports:
-        - containerPort: 5000
-          name: hello
-
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: hello
-  labels:
-    app: hello
-spec:
-  ports:
-  - port: 5000
-    targetPort: 5000
-  selector:
-    app: hello
-    tier: hello
-  type: LoadBalancer
+        - containerPort: 80
