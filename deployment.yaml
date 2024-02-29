@@ -17,3 +17,4 @@ spec:
         image: us-central1-docker.pkg.dev/project-satheesh/test-artifact-build
         ports:
         - containerPort: 80
+
