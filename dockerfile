@@ -1,5 +1,11 @@
-# Use Alpine Linux as base image
-FROM alpine
+# Use a base image
+FROM nginx:alpine
 
-# Set default command to echo "Hello World!!"
-CMD ["echo", "Hello World!!"]
+# Copy custom configuration file
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Expose port
+EXPOSE 80
+
+# Default command
+CMD ["nginx", "-g", "daemon off;"]
