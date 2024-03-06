@@ -7,7 +7,7 @@ pipeline {
                 echo 'Building..'
                 script {
                     // Build Docker image
-                    dockerImage = docker.build('test', '.')
+                    dockerImage = docker.build('test1', '.')
                 }    
             }
         }
