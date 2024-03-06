@@ -1,2 +1,5 @@
-FROM httpd:2.4
-COPY ./index.html /usr/local/apache2/htdocs/
+FROM alpine:3.4
+
+RUN apk update
+RUN apk add vim
+RUN apk add curl
