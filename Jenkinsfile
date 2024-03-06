@@ -5,7 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
-                docker build -t nginx -f Dockerfile .   
+                docker build . -t nginx  
             }
         }
         stage('Test') {
