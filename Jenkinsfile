@@ -5,10 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
-                script {
-                    // Build Docker image
-                    dockerImage = docker.build('test1', '.')
-                }    
+                docker build -t nginx -f Dockerfile .   
             }
         }
         stage('Test') {
